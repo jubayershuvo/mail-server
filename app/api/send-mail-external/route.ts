@@ -32,6 +32,11 @@ export async function POST(req: Request) {
     },
   });
 
-  await transporter.sendMail({ from: `Jubayer's API${user.email}`, to, subject, text });
+  await transporter.sendMail({
+    from: `${user.name} <${user.email}>`,
+    to,
+    subject,
+    text,
+  });
   return new Response(JSON.stringify({ success: true }));
 }

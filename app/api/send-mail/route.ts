@@ -57,7 +57,7 @@ export async function POST(req: Request) {
 
     // Send email
     await transporter.sendMail({
-      from: `"Your Name" <${userEmail}>`,
+      from: `${user.name} <${userEmail}>`,
       to,
       subject,
       text,
