@@ -38,7 +38,7 @@ export default function HomePage() {
                 </button>
               </Link>
             ) : (
-              <Link href="/signin">
+              <Link href="/api/auth/signin">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-lg shadow-md transition">
                   Login
                 </button>

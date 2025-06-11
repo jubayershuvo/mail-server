@@ -14,7 +14,7 @@ export default function SendMailPage() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push('/signin');
+      router.push('/api/auth/signin');
     }
   }, [status]);
 

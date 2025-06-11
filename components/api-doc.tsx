@@ -14,7 +14,7 @@ export default function ApiDocPage() {
   const router = useRouter();
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/signin");
+      router.push("/api/auth/signin");
     }
 
     async function fetchApiKey() {
