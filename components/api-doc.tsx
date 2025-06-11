@@ -5,7 +5,7 @@ import { ClipboardCopy, Check } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 export default function ApiDocPage() {
-  const { data: session, status } = useSession<any>();
+  const { data: session, status }:any = useSession();
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
