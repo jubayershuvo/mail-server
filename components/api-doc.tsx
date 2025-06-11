@@ -3,18 +3,18 @@
 import { useEffect, useState } from "react";
 import { ClipboardCopy, Check } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function ApiDocPage() {
-  const { data: session, status }:any = useSession();
+  const { data: session, status }: any = useSession();
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     if (status === "unauthenticated") {
-      window.location.href = "/signin";
-      return;
+      router.push("/signin");
     }
 
     async function fetchApiKey() {
@@ -140,4 +140,3 @@ Content-Type: application/json
     </main>
   );
 }
-
