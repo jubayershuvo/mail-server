@@ -31,7 +31,7 @@ export const authOptions = {
           access_type: "offline",
           prompt: "consent",
         },
-      }
+      },
     }),
   ],
 
@@ -67,6 +67,7 @@ export const authOptions = {
 
           const updateData: any = {
             email: user.email,
+            name: user.name, // ✅ Store full name
             provider: account.provider,
             providerAccountId: account.providerAccountId,
             accessToken: account.access_token,

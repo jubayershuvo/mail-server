@@ -7,7 +7,7 @@ import User from "@/models/User";
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
-    return new Response("Unauthorized", { status: 401 });
+    return Response.redirect("/signin", 302);
   }
 
   await connectToDB();
