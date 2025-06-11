@@ -38,7 +38,6 @@ export async function POST(req: Request) {
     if (!accessToken) {
       throw new Error("Failed to retrieve access token");
     }
-    console.log(accessToken, user)
 
     // Create Nodemailer transporter using OAuth2
     const transporter = nodemailer.createTransport({
