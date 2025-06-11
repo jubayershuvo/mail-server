@@ -1,11 +1,11 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function DashboardPage() {
-  const { data: session, status }:any = useSession();
+  const { data: session, status }: any = useSession();
   const router = useRouter();
 
   useEffect(() => {
@@ -37,6 +37,12 @@ export default function DashboardPage() {
             className="px-6 py-2 rounded-xl border border-gray-400 text-gray-700 hover:bg-gray-100 transition"
           >
             API Docs
+          </button>
+          <button
+            onClick={() => signOut()}
+            className="px-6 py-2 rounded-xl bg-red-500 border border-gray-400 text-white hover:bg-red-600 transition"
+          >
+            Logout
           </button>
         </div>
       </main>

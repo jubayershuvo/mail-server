@@ -1,79 +1,89 @@
 import { connectToDB } from "@/utils/db";
 import User from "@/models/User";
-import nodemailer from "nodemailer";
-import { google } from "googleapis";
+import { sendOutlookMailWithRefreshToken } from "@/lib/outlook";
+import { sendGmailMail } from "@/lib/gmail";
 
 export async function POST(req: Request) {
   try {
     const { userEmail, to, subject, text } = await req.json();
 
-    // Connect to MongoDB
-    await connectToDB();
-
-    // Find user and their stored OAuth refresh token
-    const user = await User.findOne({ email: userEmail });
-    if (!user || !user.refreshToken) {
+    // Validate input
+    if (!userEmail || !to || !subject || !text) {
       return new Response(
-        JSON.stringify({ error: "Missing OAuth tokens for user" }),
+        JSON.stringify({ error: "Missing required fields" }),
         { status: 400 }
       );
     }
 
-    // Create OAuth2 client with your Google app credentials
-    const oauth2Client = new google.auth.OAuth2(
-      process.env.GOOGLE_CLIENT_ID!,
-      process.env.GOOGLE_CLIENT_SECRET!,
-      "https://developers.google.com/oauthplayground"
-    );
+    await connectToDB();
 
-    // Set refresh token
-    oauth2Client.setCredentials({
-      refresh_token: user.refreshToken,
-    });
-
-    // Get access token
-    const accessTokenResponse = await oauth2Client.getAccessToken();
-    const accessToken = accessTokenResponse?.token;
-
-    if (!accessToken) {
-      throw new Error("Failed to retrieve access token");
+    const user = await User.findOne({ email: userEmail });
+    if (!user || !user.refreshToken || !user.provider) {
+      return new Response(
+        JSON.stringify({ error: "Missing OAuth tokens or provider" }),
+        { status: 400 }
+      );
     }
 
-    // Create Nodemailer transporter using OAuth2
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: "OAuth2",
-        user: user.email,
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        refreshToken: user.refreshToken,
-        accessToken,
-      },
-    });
+    if (user.provider === "google") {
+      try {
+        await sendGmailMail({
+          userEmail: user.email,
+          refreshToken: user.refreshToken,
+          to,
+          subject,
+          text,
+          senderName: user.name,
+        });
+        return new Response(JSON.stringify({ success: true }), { status: 200 });
+      } catch (error: any) {
+        console.error("Send mail error:", error);
+        return new Response(
+          JSON.stringify({
+            error: error.message || "Failed to send mail",
+            details: error,
+          }),
+          { status: 500 }
+        );
+      }
+    } else if (user.provider === "azure-ad") {
+      try {
+        await sendOutlookMailWithRefreshToken({
+          refreshToken: user.refreshToken,
+          recipient: to,
+          subject,
+          content: text,
+        });
 
-    // Verify connection configuration
-    await transporter.verify();
-
-    // Send email
-    await transporter.sendMail({
-      from: `${user.name} <${userEmail}>`,
-      to,
-      subject,
-      text,
-    });
-
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
+        return new Response(JSON.stringify({ success: true }), { status: 200 });
+      } catch (error: any) {
+        console.error("Send mail error:", error);
+        return new Response(
+          JSON.stringify({
+            error: error.message || "Failed to send mail",
+            details: error,
+          }),
+          { status: 500 }
+        );
+      }
+    } else if (user.provider === "zoho") {
+      return new Response(
+        JSON.stringify({ error: "Zoho provider not supported" }),
+        { status: 400 }
+      );
+    } else {
+      return new Response(
+        JSON.stringify({ error: "Unsupported provider: " + user.provider }),
+        { status: 400 }
+      );
+    }
   } catch (error: any) {
-    let errorMessage = "Failed to send mail";
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    } else if (error && typeof error === "object" && "details" in error) {
-      errorMessage = (error as any).details;
-    }
-
+    console.error("Send mail error:", error);
     return new Response(
-      JSON.stringify({ error: errorMessage, details: error }),
+      JSON.stringify({
+        error: error.message || "Failed to send mail",
+        details: error,
+      }),
       { status: 500 }
     );
   }

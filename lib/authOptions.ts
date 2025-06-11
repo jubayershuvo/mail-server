@@ -1,8 +1,10 @@
 import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
+import ZohoProvider from "next-auth/providers/zoho";
 import User from "@/models/User";
 import { connectToDB } from "@/utils/db";
 import crypto from "crypto";
+
 
 const generateApiKey = () => crypto.randomBytes(32).toString("hex");
 
@@ -24,10 +26,20 @@ export const authOptions = {
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID!,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_AD_TENANT_ID!,
+       tenantId: "common",
       authorization: {
         params: {
-          scope: "openid email profile user.read Mail.Send",
+          scope: "openid profile email offline_access Mail.Send",
+          prompt: "consent",
+        },
+      },
+    }),
+    ZohoProvider({
+      clientId: process.env.ZOHO_CLIENT_ID!,
+      clientSecret: process.env.ZOHO_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          scope: "Aaaserver.profile.Read zohomail.messages.CREATE",
           access_type: "offline",
           prompt: "consent",
         },
