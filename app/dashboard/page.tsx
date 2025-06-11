@@ -1,9 +1,9 @@
-import SignInPage from "@/components/sign-in";
+import DashboardPage from "@/components/dashboard";
 
 export const metadata = {
   title: "Dashboard",
 };
 
 export default function Page() {
-  return <SignInPage/>;
+  return <DashboardPage/>;
 }
