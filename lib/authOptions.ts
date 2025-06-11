@@ -1,5 +1,5 @@
 import GoogleProvider from "next-auth/providers/google";
-import MicrosoftProvider from "next-auth/providers/azure-ad";
+import AzureADProvider from "next-auth/providers/azure-ad";
 import User from "@/models/User";
 import { connectToDB } from "@/utils/db";
 import crypto from "crypto";
@@ -21,10 +21,17 @@ export const authOptions = {
       },
     }),
 
-    MicrosoftProvider({
-      clientId: process.env.AZURE_CLIENT_ID!,
-      clientSecret: process.env.AZURE_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_TENANT_ID!,
+    AzureADProvider({
+      clientId: process.env.AZURE_AD_CLIENT_ID!,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+      tenantId: process.env.AZURE_AD_TENANT_ID!,
+      authorization: {
+        params: {
+          scope: "openid email profile user.read Mail.Send",
+          access_type: "offline",
+          prompt: "consent",
+        },
+      }
     }),
   ],
 
@@ -85,10 +92,5 @@ export const authOptions = {
         console.error("Error saving user during signIn:", error);
       }
     },
-  },
-
-  pages: {
-    signIn: "/auth/signin",
-    error: "/auth/error",
   },
 };
