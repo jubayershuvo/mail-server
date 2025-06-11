@@ -24,12 +24,12 @@ export default function SignInPage() {
       >
         Sign in with Google
       </button>
-      {/* <button
+      <button
         onClick={() => signIn('azure_ad')}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
         Sign in with Microsoft
-      </button> */}
+      </button>
     </div>
   );
 }
