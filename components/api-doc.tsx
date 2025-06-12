@@ -79,7 +79,7 @@ export default function ApiDocPage() {
               Send an email using your linked Gmail or Outlook account.
             </p>
             <pre className="bg-gray-100 p-4 rounded overflow-auto text-sm whitespace-pre-wrap">
-              {`POST /api/send-mail-external
+              {`POST ${process.env.NEXTAUTH_URL}/api/send-mail-external
 Content-Type: application/json
 
 {
