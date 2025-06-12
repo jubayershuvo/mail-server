@@ -83,7 +83,7 @@ export default function ApiDocPage() {
               🚀 Send Email Endpoint
             </h2>
             <p className="mb-4">
-              Send an email using your linked Gmail or Outlook account.
+              Send an email using your linked Gmail, Outlook and Zoho account.
             </p>
             <pre className="bg-gray-100 p-4 rounded overflow-auto text-sm whitespace-pre-wrap">
               {`POST ${process.env.NEXTAUTH_URL}/api/send-mail-external

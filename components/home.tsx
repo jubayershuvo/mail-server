@@ -24,7 +24,7 @@ export default function HomePage() {
         </h1>
 
         <p className="text-lg sm:text-xl text-center mb-8 max-w-2xl">
-          Send emails on behalf of your users securely with Gmail or Outlook
+          Send emails on behalf of your users securely with Gmail, Outlook and Zoho
           using our API platform. Integrate email services seamlessly with your
           apps.
         </p>
