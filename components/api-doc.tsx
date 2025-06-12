@@ -56,7 +56,14 @@ export default function ApiDocPage() {
           <section className="mb-10">
             <h2 className="text-2xl font-semibold mb-2">🔑 Your API Key</h2>
             <div className="relative bg-gray-100 p-4 rounded font-mono text-sm break-words w-full flex items-center justify-between">
-              <span className="break-all">{apiKey}</span>
+              <span className="break-all">
+                {apiKey
+                  ? `${apiKey.slice(0, apiKey.length / 2)}${"*".repeat(
+                      apiKey.length / 2
+                    )}`
+                  : ""}
+              </span>
+
               <button
                 onClick={handleCopy}
                 className="ml-4 p-2 text-gray-600 hover:text-blue-600 transition"
@@ -83,7 +90,11 @@ export default function ApiDocPage() {
 Content-Type: application/json
 
 {
-  "apiKey": ${apiKey},
+  "apiKey": ${
+    apiKey
+      ? `${apiKey.slice(0, apiKey.length / 2)}${"*".repeat(apiKey.length / 2)}`
+      : ""
+  },
   "to": "freind@example.com",
   "subject": "Greetings from ${session?.user?.name || "JSCoder"}",
   "text": "Hello, this is a test email sent via API."
