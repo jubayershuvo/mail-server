@@ -35,6 +35,7 @@ export default function SendMailPage() {
           ...form,
           userEmail: session?.user?.email,
           provider: session?.user?.provider,
+          refreshToken: session?.user?.refreshToken,
         }),
       });
 

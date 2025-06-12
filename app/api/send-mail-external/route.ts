@@ -8,6 +8,9 @@ import { sendZohoMailWithRefreshToken } from "@/lib/zoho";
 export async function POST(req: Request) {
   const { apiKey, to, subject, text } = await req.json();
   if (!apiKey) return new Response("Missing API key", { status: 400 });
+  if (!to) return new Response("Missing recipient", { status: 400 });
+  if (!subject) return new Response("Missing subject", { status: 400 });
+  if (!text) return new Response("Missing text", { status: 400 });
 
   await connectToDB();
   const user = await User.findOne({ apiKey });
@@ -54,7 +57,7 @@ export async function POST(req: Request) {
     }
   } else if (user.provider === "zoho") {
     try {
-      await sendOutlookMailWithRefreshToken({
+      await sendZohoMailWithRefreshToken({
         refreshToken: user.refreshToken,
         recipient: to,
         subject,

@@ -6,7 +6,14 @@ import { sendZohoMailWithRefreshToken } from "@/lib/zoho";
 
 export async function POST(req: Request) {
   try {
-    const { userEmail, to, subject, text, provider } = await req.json();
+    const {
+      userEmail,
+      to,
+      subject,
+      text,
+      provider,
+      refreshToken: userRefreshToken,
+    } = await req.json();
 
     // Validate input
     if (!userEmail || !to || !subject || !text) {
@@ -23,6 +30,13 @@ export async function POST(req: Request) {
       return new Response(
         JSON.stringify({ error: "Missing OAuth tokens or provider" }),
         { status: 400 }
+      );
+    }
+
+    if(user.refreshToken !== userRefreshToken) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized login again" }),
+        { status: 401 }
       );
     }
 
