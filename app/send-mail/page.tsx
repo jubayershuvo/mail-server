@@ -1,7 +1,7 @@
 import SendMailPage from "@/components/send-mail";
 
 export const metadata = {
-  title: "Dashboard",
+  title: "Send mail",
 };
 
 export default function Page() {

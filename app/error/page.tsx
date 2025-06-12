@@ -1,7 +1,7 @@
 import ErrorPage from "@/components/error";
 
 export const metadata = {
-  title: "Dashboard",
+  title: "Error",
 };
 
 export default function Page() {

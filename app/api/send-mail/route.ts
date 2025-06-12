@@ -2,10 +2,11 @@ import { connectToDB } from "@/utils/db";
 import User from "@/models/User";
 import { sendOutlookMailWithRefreshToken } from "@/lib/outlook";
 import { sendGmailMail } from "@/lib/gmail";
+import { sendZohoMailWithRefreshToken } from "@/lib/zoho";
 
 export async function POST(req: Request) {
   try {
-    const { userEmail, to, subject, text } = await req.json();
+    const { userEmail, to, subject, text, provider } = await req.json();
 
     // Validate input
     if (!userEmail || !to || !subject || !text) {
@@ -17,7 +18,7 @@ export async function POST(req: Request) {
 
     await connectToDB();
 
-    const user = await User.findOne({ email: userEmail });
+    const user = await User.findOne({ email: userEmail, provider });
     if (!user || !user.refreshToken || !user.provider) {
       return new Response(
         JSON.stringify({ error: "Missing OAuth tokens or provider" }),
@@ -67,10 +68,25 @@ export async function POST(req: Request) {
         );
       }
     } else if (user.provider === "zoho") {
-      return new Response(
-        JSON.stringify({ error: "Zoho provider not supported" }),
-        { status: 400 }
-      );
+      try {
+        await sendZohoMailWithRefreshToken({
+          refreshToken: user.refreshToken,
+          recipient: to,
+          subject,
+          content: text,
+        });
+
+        return new Response(JSON.stringify({ success: true }), { status: 200 });
+      } catch (error: any) {
+        console.error("Send mail error:", error);
+        return new Response(
+          JSON.stringify({
+            error: error.message || "Failed to send mail",
+            details: error,
+          }),
+          { status: 500 }
+        );
+      }
     } else {
       return new Response(
         JSON.stringify({ error: "Unsupported provider: " + user.provider }),

@@ -1,7 +1,7 @@
 import ApiDocPage from "@/components/api-doc";
 
 export const metadata = {
-  title: "Dashboard",
+  title: "Api documentation",
 };
 
 export default function Page() {

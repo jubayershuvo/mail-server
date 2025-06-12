@@ -3,6 +3,7 @@ import { connectToDB } from "@/utils/db";
 import User from "@/models/User";
 import { sendGmailMail } from "@/lib/gmail";
 import { sendOutlookMailWithRefreshToken } from "@/lib/outlook";
+import { sendZohoMailWithRefreshToken } from "@/lib/zoho";
 
 export async function POST(req: Request) {
   const { apiKey, to, subject, text } = await req.json();
@@ -13,25 +14,25 @@ export async function POST(req: Request) {
   if (!user) return new Response("Invalid API key", { status: 403 });
 
   if (user.provider === "google") {
-   try {
-     await sendGmailMail({
-       userEmail: user.email,
-       refreshToken: user.refreshToken,
-       to,
-       subject,
-       text,
-     });
-     return new Response(JSON.stringify({ success: true }), { status: 200 });
-   } catch (error: any) {
-     console.error("Send mail error:", error);
-     return new Response(
-       JSON.stringify({
-         error: error.message || "Failed to send mail",
-         details: error,
-       }),
-       { status: 500 }
-     );
-   }
+    try {
+      await sendGmailMail({
+        userEmail: user.email,
+        refreshToken: user.refreshToken,
+        to,
+        subject,
+        text,
+      });
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    } catch (error: any) {
+      console.error("Send mail error:", error);
+      return new Response(
+        JSON.stringify({
+          error: error.message || "Failed to send mail",
+          details: error,
+        }),
+        { status: 500 }
+      );
+    }
   } else if (user.provider === "azure-ad") {
     try {
       await sendOutlookMailWithRefreshToken({
@@ -50,16 +51,28 @@ export async function POST(req: Request) {
         }),
         { status: 500 }
       );
-      
     }
-  }else if(user.provider === "zoho") {
-    return new Response(
-      JSON.stringify({
-        error: "Sending mail is not available with Zoho provider",
-      }),
-      { status: 501 }
-    );
-  }else{
+  } else if (user.provider === "zoho") {
+    try {
+      await sendOutlookMailWithRefreshToken({
+        refreshToken: user.refreshToken,
+        recipient: to,
+        subject,
+        content: text,
+      });
+
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    } catch (error: any) {
+      console.error("Send mail error:", error);
+      return new Response(
+        JSON.stringify({
+          error: error.message || "Failed to send mail",
+          details: error,
+        }),
+        { status: 500 }
+      );
+    }
+  } else {
     return new Response(
       JSON.stringify({
         error: "Sending mail is not available with this provider",

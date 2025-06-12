@@ -5,7 +5,6 @@ import User from "@/models/User";
 import { connectToDB } from "@/utils/db";
 import crypto from "crypto";
 
-
 const generateApiKey = () => crypto.randomBytes(32).toString("hex");
 
 export const authOptions = {
@@ -26,7 +25,7 @@ export const authOptions = {
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID!,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-       tenantId: "common",
+      tenantId: "common",
       authorization: {
         params: {
           scope: "openid profile email offline_access Mail.Send",
@@ -39,7 +38,7 @@ export const authOptions = {
       clientSecret: process.env.ZOHO_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "Aaaserver.profile.Read zohomail.messages.CREATE",
+          scope: "Aaaserver.profile.Read ZohoMail.messages.CREATE ZohoMail.accounts.READ",
           access_type: "offline",
           prompt: "consent",
         },
@@ -55,10 +54,12 @@ export const authOptions = {
         token.provider = account.provider;
         token.providerAccountId = account.providerAccountId;
       }
+    
       return token;
     },
 
     async session({ session, token }: any) {
+      
       if (session.user) {
         session.user.accessToken = token.accessToken;
         session.user.refreshToken = token.refreshToken;
@@ -70,36 +71,39 @@ export const authOptions = {
   },
 
   events: {
-    async signIn({ account, user }: any) {
+    async signIn({ account, user }: { account: any; user: any }) {
       try {
         await connectToDB();
 
-        if (account?.provider && user?.email) {
-          const existingUser = await User.findOne({ email: user.email });
+        if (!account?.provider || !user?.email) return;
 
-          const updateData: any = {
+        const existingUser = await User.findOne({
+          email: user.email,
+          provider: account.provider,
+        });
+
+       
+
+        if (!existingUser) {
+          // Create new user
+          const newUser = new User({
             email: user.email,
-            name: user.name, // ✅ Store full name
+            name: user.name,
             provider: account.provider,
             providerAccountId: account.providerAccountId,
-            accessToken: account.access_token,
-          };
-
-          if (account.refresh_token) {
-            updateData.refreshToken = account.refresh_token;
-          } else if (existingUser?.refreshToken) {
-            updateData.refreshToken = existingUser.refreshToken;
-          }
-
-          updateData.apiKey = existingUser?.apiKey || generateApiKey();
-
-          await User.findOneAndUpdate({ email: user.email }, updateData, {
-            upsert: true,
-            new: true,
-            setDefaultsOnInsert: true,
+            refreshToken: account.refresh_token, // Optional: save at creation
+            apiKey: generateApiKey(),
           });
-
-          console.log("User saved or updated in DB");
+          await newUser.save();
+        } else {
+          // Update refresh token if changed
+          if (
+            account.refresh_token &&
+            existingUser.refreshToken !== account.refresh_token
+          ) {
+            existingUser.refreshToken = account.refresh_token;
+            await existingUser.save();
+          }
         }
       } catch (error) {
         console.error("Error saving user during signIn:", error);

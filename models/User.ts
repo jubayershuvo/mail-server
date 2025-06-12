@@ -4,13 +4,12 @@ import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
   {
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
     name: { type: String },
     provider: { type: String },
     providerAccountId: { type: String },
-    accessToken: { type: String },
     refreshToken: { type: String },
-    apiKey: { type: String, sparse: true, unique: true }, // ✅ FIX: add sparse:true
+    apiKey: { type: String, sparse: true, unique: true },
   },
   { timestamps: true }
 );
