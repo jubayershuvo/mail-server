@@ -25,7 +25,7 @@ export const authOptions = {
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID!,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_AD_TENANT_ID || "common",
+      tenantId: "common",
       authorization: {
         params: {
           scope: "openid profile email offline_access Mail.Send",
@@ -38,7 +38,8 @@ export const authOptions = {
       clientSecret: process.env.ZOHO_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "Aaaserver.profile.Read ZohoMail.messages.CREATE ZohoMail.accounts.READ",
+          scope:
+            "Aaaserver.profile.Read ZohoMail.messages.CREATE ZohoMail.accounts.READ",
           access_type: "offline",
           prompt: "consent",
         },
@@ -54,12 +55,11 @@ export const authOptions = {
         token.provider = account.provider;
         token.providerAccountId = account.providerAccountId;
       }
-    
+
       return token;
     },
 
     async session({ session, token }: any) {
-      
       if (session.user) {
         session.user.accessToken = token.accessToken;
         session.user.refreshToken = token.refreshToken;
@@ -81,8 +81,6 @@ export const authOptions = {
           email: user.email,
           provider: account.provider,
         });
-
-       
 
         if (!existingUser) {
           // Create new user
