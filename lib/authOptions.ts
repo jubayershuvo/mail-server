@@ -25,7 +25,7 @@ export const authOptions = {
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID!,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_AD_TENANT_ID || "common",
+      tenantId: "common",
       authorization: {
         params: {
           scope: "openid profile email offline_access Mail.Send",
