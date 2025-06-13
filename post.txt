@@ -1,0 +1,55 @@
+🚀 নতুন Node.js প্যাকেজ – @jubayer_shuvo/mailer-js
+🔗 API দিয়ে Gmail, Outlook বা Zoho একাউন্ট ব্যবহার করে খুব সহজেই ইমেইল পাঠান! এখনই শুরু করুন
+
+npm install @jubayer_shuvo/mailer-js
+# or
+yarn add @jubayer_shuvo/mailer-js
+
+✅ CommonJS (Node.js)
+const sendMail = require("@jubayer_shuvo/mailer-js");
+
+sendMail({
+  apiKey: "your-api-key",
+  to: "recipient@example.com",
+  subject: "Hello!",
+  text: "This is a test email.",
+})
+  .then(() => console.log("Email sent successfully!"))
+  .catch(console.error);
+
+
+
+✅ ESModules / TypeScript
+import sendMail from "@jubayer_shuvo/mailer-js";
+
+await sendMail({
+  apiKey: "your-api-key",
+  to: "recipient@example.com",
+  subject: "Hello!",
+  text: "This is a test email.",
+});
+
+📬 API এন্ডপয়েন্ট:
+POST https://mailer-js.vercel.app/api/send-mail-external
+কনটেন্ট-টাইপ: application/json
+📦 উদাহরণ:
+{
+  "apiKey": "আপনার API কী",
+  "to": "friend@example.com",
+  "subject": "Md Jubayer এর পক্ষ থেকে শুভেচ্ছা",
+  "text": "হ্যালো, এটি API এর মাধ্যমে পাঠানো একটি পরীক্ষামূলক ইমেইল।"
+}
+
+✅ প্রতিক্রিয়া:
+
+{ "success": true }
+
+🔥 এখনই শুরু করুন:
+🧑‍💻 npm install @jubayer_shuvo/mailer-js
+
+📚 ডকুমেন্টেশন ও লাইভ ডেমো:
+🌐 https://mailer-js.vercel.app
+❤️ ভালোবাসা দিয়ে তৈরি Md Jubayer
+🔗 গিটহাব: https://github.com/jubayershuvo/mailer-js
+
+
