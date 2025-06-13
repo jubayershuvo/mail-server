@@ -11,6 +11,7 @@ export default function ApiDocPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const router = useRouter();
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -86,7 +87,7 @@ export default function ApiDocPage() {
               Send an email using your linked Gmail, Outlook and Zoho account.
             </p>
             <pre className="bg-gray-100 p-4 rounded overflow-auto text-sm whitespace-pre-wrap">
-              {`POST ${process.env.NEXTAUTH_URL}/api/send-mail-external
+              {`POST ${baseUrl}/api/send-mail-external
 Content-Type: application/json
 
 {

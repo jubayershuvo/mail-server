@@ -91,7 +91,7 @@ export const authOptions = {
             name: user.name,
             provider: account.provider,
             providerAccountId: account.providerAccountId,
-            refreshToken: account.refresh_token, // Optional: save at creation
+            refreshToken: account.refresh_token,
             apiKey: generateApiKey(),
           });
           await newUser.save();
