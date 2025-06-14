@@ -26,7 +26,7 @@ export default function HomePage() {
         <p className="text-lg sm:text-xl text-center mb-8 max-w-2xl">
           Send emails on behalf of your users securely with Gmail, Outlook and Zoho
           using our API platform. Integrate email services seamlessly with your
-          apps.
+          apps.Read <strong>,<Link href={"/privacy-policy"}>Privacy Policy</Link> and <Link href={"/terms-of-service"}>Terms of Service</Link></strong>
         </p>
 
         {!loading && (
