@@ -1,7 +1,7 @@
 import DashboardPage from "@/components/dashboard";
 
 export const metadata = {
-  title: "Dashboard",
+  title: "Dashboard - MailerJS",
 };
 
 export default function Page() {
