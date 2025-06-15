@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema(
   {
     email: { type: String, required: true },
+    photoUrl: { type: String },
     name: { type: String },
     provider: { type: String },
     providerAccountId: { type: String },

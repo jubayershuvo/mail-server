@@ -86,22 +86,18 @@ export const authOptions = {
           // Create new user
           const newUser = new User({
             email: user.email,
-            name: user.name,
+            photoUrl: user.image || "",
+            name: user.name || "",
             provider: account.provider,
             providerAccountId: account.providerAccountId,
-            refreshToken: account.refresh_token,
+            refreshToken: account.refresh_token || "",
             apiKey: generateApiKey(),
           });
           await newUser.save();
         } else {
-          // Update refresh token if changed
-          if (
-            account.refresh_token &&
-            existingUser.refreshToken !== account.refresh_token
-          ) {
-            existingUser.refreshToken = account.refresh_token;
-            await existingUser.save();
-          }
+          existingUser.refreshToken = account.refresh_token;
+          existingUser.photoUrl = user.image || "";
+          await existingUser.save();
         }
       } catch (error) {
         console.error("Error saving user during signIn:", error);

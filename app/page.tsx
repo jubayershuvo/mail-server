@@ -2,7 +2,7 @@ import HomePage from "@/components/home";
 
 
 export const metadata = {
-  title: "Welcome",
+  title: "Mailer-JS Server - Send Emails via Gmail, Outlook, Zoho",
 };
 
 export default function Page() {
