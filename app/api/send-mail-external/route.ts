@@ -4,6 +4,7 @@ import User from "@/models/User";
 import { sendGmailMail } from "@/lib/gmail";
 import { sendOutlookMailWithRefreshToken } from "@/lib/outlook";
 import { sendZohoMailWithRefreshToken } from "@/lib/zoho";
+import Uses from "@/models/Uses";
 
 export async function POST(req: Request) {
   const { apiKey, to, subject, text } = await req.json();
@@ -25,6 +26,13 @@ export async function POST(req: Request) {
         subject,
         text,
       });
+      await Uses.create({
+        userId: user._id,
+        from: user.email,
+        to,
+        text,
+        provider: user.provider,
+      });
       return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error: any) {
       console.error("Send mail error:", error);
@@ -44,6 +52,13 @@ export async function POST(req: Request) {
         subject,
         content: text,
       });
+      await Uses.create({
+        userId: user._id,
+        from: user.email,
+        to,
+        text,
+        provider: user.provider,
+      });
       return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error: any) {
       console.error("Send mail error:", error);
@@ -62,6 +77,13 @@ export async function POST(req: Request) {
         recipient: to,
         subject,
         content: text,
+      });
+      await Uses.create({
+        userId: user._id,
+        from: user.email,
+        to,
+        text,
+        provider: user.provider,
       });
 
       return new Response(JSON.stringify({ success: true }), { status: 200 });

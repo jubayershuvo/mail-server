@@ -13,6 +13,7 @@ export default function ApiDocPage() {
   const [copied, setCopied] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const router = useRouter();
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/api/auth/signin");
@@ -43,20 +44,18 @@ export default function ApiDocPage() {
   };
 
   return (
-    <main className="w-full min-h-screen bg-white text-gray-900 px-6 py-10 sm:px-10 md:px-20">
-      <h1 className="text-4xl font-bold mb-8">
-        📧 Email Sending API Documentation
-      </h1>
+    <main className="w-full min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 px-6 py-10 sm:px-10 md:px-20 transition-colors duration-300">
+      <h1 className="text-4xl font-bold mb-8">📧 Email Sending API Documentation</h1>
 
       {loading ? (
         <p>Loading your API key...</p>
       ) : error ? (
-        <p className="text-red-600">Error: {error}</p>
+        <p className="text-red-600 dark:text-red-400">Error: {error}</p>
       ) : (
         <>
           <section className="mb-10">
             <h2 className="text-2xl font-semibold mb-2">🔑 Your API Key</h2>
-            <div className="relative bg-gray-100 p-4 rounded font-mono text-sm break-words w-full flex items-center justify-between">
+            <div className="relative bg-gray-100 dark:bg-gray-800 p-4 rounded font-mono text-sm break-words w-full flex items-center justify-between transition-colors duration-300">
               <span className="break-all">
                 {apiKey
                   ? `${apiKey.slice(0, apiKey.length / 2)}${"*".repeat(
@@ -67,7 +66,7 @@ export default function ApiDocPage() {
 
               <button
                 onClick={handleCopy}
-                className="ml-4 p-2 text-gray-600 hover:text-blue-600 transition"
+                className="ml-4 p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
                 title="Copy API Key"
               >
                 {copied ? (
@@ -80,13 +79,11 @@ export default function ApiDocPage() {
           </section>
 
           <section className="mb-10">
-            <h2 className="text-2xl font-semibold mb-2">
-              🚀 Send Email Endpoint
-            </h2>
+            <h2 className="text-2xl font-semibold mb-2">🚀 Send Email Endpoint</h2>
             <p className="mb-4">
               Send an email using your linked Gmail, Outlook and Zoho account.
             </p>
-            <pre className="bg-gray-100 p-4 rounded overflow-auto text-sm whitespace-pre-wrap">
+            <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded overflow-auto text-sm whitespace-pre-wrap transition-colors duration-300">
               {`POST ${baseUrl}/api/send-mail-external
 Content-Type: application/json
 
@@ -116,15 +113,14 @@ Content-Type: application/json
                 <strong>subject</strong> (string, required): Email subject line.
               </li>
               <li>
-                <strong>text</strong> (string, required): Plain text body of the
-                email.
+                <strong>text</strong> (string, required): Plain text body of the email.
               </li>
             </ul>
           </section>
 
           <section className="mb-10">
             <h2 className="text-2xl font-semibold mb-2">✅ Success Response</h2>
-            <pre className="bg-gray-100 p-4 rounded overflow-auto text-sm whitespace-pre-wrap">
+            <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded overflow-auto text-sm whitespace-pre-wrap transition-colors duration-300">
               {`Status: 200 OK
 {
   "success": true
@@ -136,8 +132,7 @@ Content-Type: application/json
             <h2 className="text-2xl font-semibold mb-2">❌ Error Responses</h2>
             <ul className="list-disc list-inside space-y-1 text-sm">
               <li>
-                <code>400 Bad Request</code>: Missing API key or required
-                fields.
+                <code>400 Bad Request</code>: Missing API key or required fields.
               </li>
               <li>
                 <code>403 Forbidden</code>: Invalid API key.
@@ -152,7 +147,7 @@ Content-Type: application/json
       <button
         onClick={() => router.back()}
         disabled={loading}
-        className="m-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
+        className="m-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50 transition-colors duration-300"
       >
         Back
       </button>

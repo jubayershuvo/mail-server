@@ -1,11 +1,10 @@
-
-
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionWrapper from "@/components/SessionWrapper";
 import Navbar from "@/components/nav-bar";
+import { Providers } from "./providers";
+import Footer from "@/components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,26 +19,27 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mailer Js",
   description: "Mail by google , zoho , outlook",
-   verification: {
-    google: "WP_kUEKdqz1jjoskj0TLW5w2Q3deaKQclfqqNRXDw2w", // ✅ this is the key line
+  verification: {
+    google: "WP_kUEKdqz1jjoskj0TLW5w2Q3deaKQclfqqNRXDw2w",
   },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <meta name="google-site-verification" content="WP_kUEKdqz1jjoskj0TLW5w2Q3deaKQclfqqNRXDw2w" />
+    <html lang="en" suppressHydrationWarning>
+      <head />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionWrapper>
-          <Navbar />
-          {children}
-          </SessionWrapper>
+          <Providers>
+            <Navbar />
+            {children}
+            <Footer />
+          </Providers>
+        </SessionWrapper>
       </body>
     </html>
   );

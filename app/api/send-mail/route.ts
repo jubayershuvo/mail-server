@@ -3,6 +3,7 @@ import User from "@/models/User";
 import { sendOutlookMailWithRefreshToken } from "@/lib/outlook";
 import { sendGmailMail } from "@/lib/gmail";
 import { sendZohoMailWithRefreshToken } from "@/lib/zoho";
+import Uses from "@/models/Uses";
 
 export async function POST(req: Request) {
   try {
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if(user.refreshToken !== userRefreshToken) {
+    if (user.refreshToken !== userRefreshToken) {
       return new Response(
         JSON.stringify({ error: "Unauthorized login again" }),
         { status: 401 }
@@ -49,6 +50,13 @@ export async function POST(req: Request) {
           subject,
           text,
           senderName: user.name,
+        });
+        await Uses.create({
+          userId: user._id,
+          from: user.email,
+          to,
+          text,
+          provider,
         });
         return new Response(JSON.stringify({ success: true }), { status: 200 });
       } catch (error: any) {
@@ -70,6 +78,14 @@ export async function POST(req: Request) {
           content: text,
         });
 
+        await Uses.create({
+          userId: user._id,
+          from: user.email,
+          to,
+          text,
+          provider,
+        });
+
         return new Response(JSON.stringify({ success: true }), { status: 200 });
       } catch (error: any) {
         console.error("Send mail error:", error);
@@ -88,6 +104,14 @@ export async function POST(req: Request) {
           recipient: to,
           subject,
           content: text,
+        });
+
+        await Uses.create({
+          userId: user._id,
+          from: user.email,
+          to,
+          text,
+          provider,
         });
 
         return new Response(JSON.stringify({ success: true }), { status: 200 });

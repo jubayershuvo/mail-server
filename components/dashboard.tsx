@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   FaEnvelope,
   FaBook,
@@ -11,11 +11,17 @@ import {
   FaIdBadge,
   FaGoogle,
   FaMicrosoft,
+  FaKey,
+  FaChartLine,
+  FaCloud,
 } from "react-icons/fa";
 
 export default function DashboardPage() {
   const { data: session, status }: any = useSession();
   const router = useRouter();
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [usesData, setUsesData] = useState<any>({});
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -23,47 +29,88 @@ export default function DashboardPage() {
     }
   }, [status, router]);
 
-  if (status === "loading") {
-    return <div className="p-6 text-lg">Loading...</div>;
-  }
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch(
+          `/api/uses?userEmail=${session.user.email}&provider=${session.user.provider}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch API key");
+        const data = await res.json();
+        setUsesData(data);
+      } catch (err: any) {
+        console.log(err)
+      }
+    }
+
+    if (status === "authenticated") {
+      fetchData();
+    }
+  }, [status]);
+
+  useEffect(() => {
+    async function fetchApiKey() {
+      try {
+        const res = await fetch("/api/get-api-key");
+        if (!res.ok) throw new Error("Failed to fetch API key");
+        const data = await res.json();
+        setApiKey(data.apiKey);
+      } catch (err: any) {
+        console.log(err)
+      }
+    }
+
+    if (status === "authenticated") {
+      fetchApiKey();
+    }
+  }, [status]);
+
+  const handleCopy = () => {
+    if (!apiKey) return;
+    navigator.clipboard.writeText(apiKey);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const user = session?.user;
+  const dummyStats = {
+    emailsSentToday: 14,
+    emailsSentMonth: 243,
+  };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-white to-blue-50 px-4 py-10">
-      <div className="max-w-5xl mx-auto space-y-10">
-        {/* Welcome Section */}
+    <main className="min-h-screen bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 px-6 py-12">
+      <div className="max-w-7xl mx-auto space-y-12">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          <h1 className="text-5xl font-extrabold text-gray-800 dark:text-white mb-2">
             Welcome, {user?.name || user?.email || "User"}!
           </h1>
-          <p className="text-gray-600">
-            Manage your email integrations and API usage here.
+          <p className="text-lg text-gray-500 dark:text-gray-300">
+            Your centralized dashboard for email management and API access.
           </p>
         </div>
 
-        {/* Info Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition">
-            <FaEnvelope className="text-3xl text-blue-600 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Send Emails</h2>
-            <p className="text-gray-600 text-sm">
-              Easily send transactional or bulk emails via Gmail, Outlook or Zoho.
-            </p>
-          </div>
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <Card
+            icon={<FaEnvelope className="text-blue-600 text-3xl" />}
+            title="Send Emails"
+            desc="Send transactional or bulk emails via Gmail, Outlook or Zoho."
+          />
 
-          <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition">
-            <FaBook className="text-3xl text-indigo-600 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">API Documentation</h2>
-            <p className="text-gray-600 text-sm">
-              View detailed API reference and examples to integrate into your app.
-            </p>
-          </div>
+          <Card
+            icon={<FaBook className="text-indigo-600 text-3xl" />}
+            title="API Documentation"
+            desc="Access integration guides, examples, and complete API reference."
+          />
 
-          <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition">
-            <FaUser className="text-3xl text-purple-600 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Your Profile</h2>
-            <div className="flex flex-col gap-1 text-sm text-gray-700 mt-2">
+          <div className="bg-white dark:bg-gray-900 overflow-hidden p-6 rounded-2xl shadow hover:shadow-lg transition space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                Your Profile
+              </h2>
+              <FaUser className="text-purple-600 text-2xl" />
+            </div>
+            <div className="space-y-2 text-gray-700 dark:text-gray-300 text-sm">
               {user?.image && (
                 <img
                   src={user?.image}
@@ -72,29 +119,78 @@ export default function DashboardPage() {
                 />
               )}
               <p className="flex items-center gap-2">
-                <FaIdBadge /> <span>Name:</span>{" "}
+                <FaIdBadge /> Name:{" "}
                 <strong>{user?.name || "Not available"}</strong>
               </p>
               <p className="flex items-center gap-2">
-                <FaEnvelope /> <span>Email:</span>{" "}
-                <strong>{user?.email}</strong>
+                <FaEnvelope /> Email: <strong>{user?.email}</strong>
               </p>
-              {session?.token?.provider && (
+              {session?.user?.provider && (
                 <p className="flex items-center gap-2">
-                  {session.token.provider === "google" ? (
+                  {session.user.provider === "google" ? (
                     <FaGoogle className="text-red-500" />
-                  ) : (
+                  ) : session.user.provider === "azure-ad" ? (
                     <FaMicrosoft className="text-blue-600" />
+                  ) : session.user.provider === "zoho" ? (
+                    <FaKey className="text-orange-600" />
+                  ) : (
+                    <FaEnvelope className="text-blue-600" />
                   )}
-                  <span>Provider:</span>{" "}
-                  <strong className="capitalize">{session.token.provider}</strong>
+                  Provider:{" "}
+                  <strong className="capitalize">
+                    {session.user.provider}
+                  </strong>
                 </p>
               )}
             </div>
           </div>
-        </div>
 
-        {/* Actions */}
+          <Card
+            icon={<FaChartLine className="text-green-500 text-3xl" />}
+            title="Usage Stats"
+            desc={
+              <>
+                <p>
+                  Today: <strong>{usesData?.todayUses || 0}</strong>
+                </p>
+                <p>
+                  This Month: <strong>{usesData?.thisMonthUses || 0}</strong>
+                </p>
+                <p>
+                  Total: <strong>{usesData?.totalUses || 0}</strong>
+                </p>
+              </>
+            }
+          />
+
+          <Card
+            icon={<FaKey className="text-yellow-500 text-3xl" />}
+            title="API Key"
+            desc={
+              <>
+                <p className="break-words">
+                  {apiKey?.slice(0, apiKey.length / 2)}$
+                  {"*".repeat(apiKey?.length! / 2) || "Loading..."}
+                </p>
+                <button
+                  onClick={handleCopy}
+                  className="mt-1 text-sm text-blue-600 dark:text-blue-400 cursor-pointer"
+                >
+                  {copied ? "Copied!" : "Copy"}
+                </button>
+              </>
+            }
+          />
+
+          <Card
+            icon={<FaCloud className="text-sky-500 text-3xl" />}
+            title="Provider Status"
+            desc={`Provider: ${
+              session?.user?.provider ? "Connected" : "Not connected"
+            }`}
+          />
+        </section>
+
         <div className="flex flex-wrap justify-center gap-4 mt-10">
           <button
             onClick={() => router.push("/send-mail")}
@@ -105,7 +201,7 @@ export default function DashboardPage() {
 
           <button
             onClick={() => router.push("/api-doc")}
-            className="flex items-center gap-2 border border-gray-400 text-gray-700 px-6 py-2 rounded-xl hover:bg-gray-100 transition"
+            className="flex items-center gap-2 border border-gray-400 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-6 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"
           >
             <FaBook /> API Docs
           </button>
@@ -119,5 +215,28 @@ export default function DashboardPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+// Reusable card
+function Card({
+  icon,
+  title,
+  desc,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  desc: React.ReactNode;
+}) {
+  return (
+    <div className="bg-white overflow-hidden dark:bg-gray-900 p-6 rounded-2xl shadow hover:shadow-lg transition space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+          {title}
+        </h2>
+        {icon}
+      </div>
+      <div className="text-sm text-gray-600 dark:text-gray-300">{desc}</div>
+    </div>
   );
 }
