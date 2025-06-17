@@ -50,17 +50,15 @@ export default function Navbar() {
           >
             Docs
           </Link>
-          <Link
-            href="/send-mail"
-            className={`${isActive("/send-mail")} hover:text-indigo-600`}
-          >
-            Send Mail
-          </Link>
-
-          
 
           {session ? (
             <>
+              <Link
+                href="/send-mail"
+                className={`${isActive("/send-mail")} hover:text-indigo-600`}
+              >
+                Send Mail
+              </Link>
               <Link
                 href="/dashboard"
                 className={`bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 ${
@@ -89,13 +87,12 @@ export default function Navbar() {
 
         {/* Mobile Menu Toggle */}
         <div className="flex items-center md:hidden">
-
           <div
-          className=" text-2xl text-gray-800 dark:text-white cursor-pointer"
-          onClick={toggleMenu}
-        >
-          {isOpen ? <FaTimes /> : <FaBars />}
-        </div>
+            className=" text-2xl text-gray-800 dark:text-white cursor-pointer"
+            onClick={toggleMenu}
+          >
+            {isOpen ? <FaTimes /> : <FaBars />}
+          </div>
           <ThemeToggle />
         </div>
       </div>
@@ -123,18 +120,16 @@ export default function Navbar() {
             >
               Docs
             </Link>
-            <Link
-              href="/send-mail"
-              onClick={closeMenu}
-              className={`block py-2 ${isActive("/send-mail")}`}
-            >
-              Send Mail
-            </Link>
-
-          
 
             {session ? (
               <>
+                <Link
+                  href="/send-mail"
+                  onClick={closeMenu}
+                  className={`block py-2 ${isActive("/send-mail")}`}
+                >
+                  Send Mail
+                </Link>
                 <Link
                   href="/dashboard"
                   onClick={closeMenu}

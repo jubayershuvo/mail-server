@@ -52,7 +52,7 @@ export default function HomePage() {
           >
             <Link href={session ? "/dashboard" : "/api/auth/signin"}>
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full shadow-md text-lg transition">
-                {session ? "Go to Dashboard" : "Get Started"}
+                {session ? "Go to Dashboard" : "Get Access Now"}
               </button>
             </Link>
           </motion.div>
@@ -191,7 +191,7 @@ Body:
         </p>
         <Link href={session ? "/dashboard" : "/api/auth/signin"}>
           <button className="bg-white text-indigo-600 px-8 py-3 rounded-full shadow-md hover:bg-gray-100 transition">
-            {session ? "Open Dashboard" : "Get Started Now"}
+            {session ? "Open Dashboard" : "Get Access"}
           </button>
         </Link>
       </section>
