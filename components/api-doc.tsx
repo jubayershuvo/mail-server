@@ -9,10 +9,10 @@ import Link from "next/link";
 export default function ApiDocPage() {
   const { data: session, status }: any = useSession();
   const [apiKey, setApiKey] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+
   const [copied, setCopied] = useState(false);
+  const [npmCopied, setNpmCopied] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const router = useRouter();
 
   useEffect(() => {
     if (!session?.user?.email) {
@@ -26,8 +26,6 @@ export default function ApiDocPage() {
         setApiKey(data.apiKey);
       } catch (err: any) {
         setApiKey(null);
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -40,6 +38,11 @@ export default function ApiDocPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     }
+  };
+  const handleNpmCopy = () => {
+    navigator.clipboard.writeText("npm install @jubayer_shuvo/mailer-js");
+    setNpmCopied(true);
+    setTimeout(() => setNpmCopied(false), 1500);
   };
 
   return (
@@ -90,69 +93,132 @@ export default function ApiDocPage() {
 Content-Type: application/json
 
 {
-  "apiKey": ${
+  apiKey: ${
     apiKey
       ? `${apiKey.slice(0, apiKey.length / 2)}${"*".repeat(apiKey.length / 2)}`
       : `"apiKey"`
   },
-  "to": "freind@example.com",
-  "subject": "Greetings from ${session?.user?.name || "JSCoder"}",
-  "text": "Hello, this is a test email sent via API."
+  to: "freind@example.com",
+  subject": "Greetings from ${session?.user?.name || "JSCoder"}",
+  text: "Hello, this is a test email sent via API."
 }`}
         </pre>
       </section>
 
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-2">📋 Parameters</h2>
-        <ul className="list-disc list-inside space-y-1 text-sm">
+      <h1 className="text-3xl font-bold mb-6">📄 Package Documentation</h1>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold dark:text-white mb-2">
+          📦 Installation
+        </h2>
+        <div className="relative bg-gray-100 dark:bg-gray-800 rounded-md overflow-hidden p-4 flex items-center justify-between transition-colors duration-300">
+          <code className="text-sm font-mono text-gray-800 dark:text-gray-200 break-all">
+            npm install @jubayer_shuvo/mailer-js
+          </code>
+
+          <button
+            onClick={handleNpmCopy}
+            className="ml-4 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+            title="Copy command"
+            aria-label="Copy npm install command"
+          >
+            {npmCopied ? (
+              <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
+            ) : (
+              <ClipboardCopy className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            )}
+          </button>
+        </div>
+      </section>
+
+      <section className="mb-6 dark:bg-gray-800 rounded-md dark:text-gray-200">
+        <h2 className="text-2xl font-semibold">🚀 Usage</h2>
+        <h3 className="text-xl font-medium mt-4 dark:text-gray-300">
+          ✅ CommonJS
+        </h3>
+        <pre className="bg-gray-100 dark:bg-gray-700 p-4 rounded mt-2 overflow-auto text-sm">
+          {`const sendMail = require("@jubayer_shuvo/mailer-js");
+
+sendMail({
+  apiKey: ${
+    apiKey
+      ? `${apiKey.slice(0, apiKey.length / 2)}${"*".repeat(apiKey.length / 2)}`
+      : `"apiKey"`
+  },
+  to: "freind@example.com",
+  subject: "Greetings from ${session?.user?.name || "JSCoder"}",
+  text: "Hello, this is a test email sent via API.",
+}).then(() => console.log("Email sent!")).catch(console.error);`}
+        </pre>
+
+        <h3 className="text-xl font-medium mt-6 dark:text-gray-300">
+          ✅ ESModules / TypeScript
+        </h3>
+        <pre className="bg-gray-100 dark:bg-gray-700 p-4 rounded mt-2 overflow-auto text-sm">
+          {`import sendMail from "@jubayer_shuvo/mailer-js";
+
+await sendMail({
+  apiKey: ${
+    apiKey
+      ? `${apiKey.slice(0, apiKey.length / 2)}${"*".repeat(apiKey.length / 2)}`
+      : `"apiKey"`
+  },
+  to: "freind@example.com",
+  subject: "Greetings from ${session?.user?.name || "JSCoder"}",
+  text: "Hello, this is a test email sent via API."
+}).then(() => console.log("Email sent!")).catch(console.error);`}
+        </pre>
+      </section>
+
+      <section className="mb-6 dark:bg-gray-800 dark:text-gray-200">
+        <h2 className="text-2xl font-semibold">📋 API Parameters</h2>
+        <ul className="list-disc ml-6 mt-2 dark:text-gray-300">
           <li>
-            <strong>apiKey</strong> (string, required): Your unique API key.
+            <strong>apiKey</strong>{" "}
+            <code className="dark:text-gray-400">(string, required)</code>: Your
+            API key.
           </li>
           <li>
-            <strong>to</strong> (string, required): Recipient email address.
+            <strong>to</strong>{" "}
+            <code className="dark:text-gray-400">(string, required)</code>:
+            Recipient's email address.
           </li>
           <li>
-            <strong>subject</strong> (string, required): Email subject line.
+            <strong>subject</strong>{" "}
+            <code className="dark:text-gray-400">(string, required)</code>:
+            Email subject.
           </li>
           <li>
-            <strong>text</strong> (string, required): Plain text body of the
-            email.
+            <strong>text</strong>{" "}
+            <code className="dark:text-gray-400">(string, required)</code>:
+            Email body text.
           </li>
         </ul>
       </section>
 
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-2">✅ Success Response</h2>
-        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded overflow-auto text-sm whitespace-pre-wrap transition-colors duration-300">
-          {`Status: 200 OK
-{
+      <section className="mb-6 dark:bg-gray-800 dark:text-gray-200">
+        <h2 className="text-2xl font-semibold">✅ Success Response</h2>
+        <pre className="bg-green-100 dark:bg-green-700 p-4 rounded mt-2 overflow-auto text-sm">
+          {`{
   "success": true
 }`}
         </pre>
       </section>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-2">❌ Error Responses</h2>
-        <ul className="list-disc list-inside space-y-1 text-sm">
+      <section className="dark:bg-gray-800 dark:text-gray-200">
+        <h2 className="text-2xl font-semibold">❌ Error Responses</h2>
+        <ul className="list-disc ml-6 mt-2 dark:text-gray-300">
           <li>
-            <code>400 Bad Request</code>: Missing API key or required fields.
+            <strong>400</strong> - Missing fields or parameters.
           </li>
           <li>
-            <code>403 Forbidden</code>: Invalid API key.
+            <strong>403</strong> - Invalid API Key.
           </li>
           <li>
-            <code>500 Internal Server Error</code>: Email sending failed.
+            <strong>500</strong> - Internal Server Error.
           </li>
         </ul>
       </section>
-
-      <button
-        onClick={() => router.back()}
-        disabled={loading}
-        className="m-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50 transition-colors duration-300"
-      >
-        Back
-      </button>
     </main>
   );
 }

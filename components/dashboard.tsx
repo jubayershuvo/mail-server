@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   FaEnvelope,
   FaBook,
@@ -118,6 +118,7 @@ export default function DashboardPage() {
                   className="w-20 h-20 rounded-full border object-cover mb-2"
                 />
               )}
+
               <p className="flex items-center gap-2">
                 <FaIdBadge /> Name:{" "}
                 <strong>{user?.name || "Not available"}</strong>
