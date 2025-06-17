@@ -41,13 +41,8 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/api-docs" className="hover:underline">
+              <Link href="/api-doc" className="hover:underline">
                 API Docs
-              </Link>
-            </li>
-            <li>
-              <Link href="/faq" className="hover:underline">
-                FAQ
               </Link>
             </li>
           </ul>
@@ -85,14 +80,14 @@ export default function Footer() {
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
               <FaEnvelope />
-              <a href="mailto:mdjubayerislamshuvo34@gmail.com" className="hover:underline">
+              <a href={`mailto:${process.env.NEXT_PUBLIC_EMAIL}`} className="hover:underline">
                 Email Support
               </a>
             </li>
             <li className="flex items-center gap-2">
               <FaGlobe />
               <a
-                href="https://mailer-js.vercel.app"
+                href={process.env.NEXT_PUBLIC_BASE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:underline"
@@ -103,7 +98,7 @@ export default function Footer() {
             <li className="flex items-center gap-2">
               <FaGithub />
               <a
-                href="https://github.com/js-coder-mailer"
+                href="https://github.com/jubayershuvo/mailer-js"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:underline"
@@ -114,7 +109,7 @@ export default function Footer() {
             <li className="flex items-center gap-2">
               <FaLinkedin />
               <a
-                href="https://linkedin.com/in/mdjubayer"
+                href="https://www.linkedin.com/in/jubayershuvo"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:underline"
