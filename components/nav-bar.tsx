@@ -79,7 +79,7 @@ export default function Navbar() {
               href="/api/auth/signin"
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
-              Login
+              Access
             </Link>
           )}
           <ThemeToggle />
@@ -153,7 +153,7 @@ export default function Navbar() {
                 onClick={closeMenu}
                 className="block py-2 text-blue-600"
               >
-                Login
+                Access
               </Link>
             )}
           </motion.div>
