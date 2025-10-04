@@ -62,7 +62,7 @@ export async function sendGmailMail({
       from: `${senderName || userEmail} <${userEmail}>`,
       to,
       subject,
-      text,
+      html: text.replace(/\n/g, "<br>"),
     });
 
     console.log("Gmail mail sent:", result.messageId);
