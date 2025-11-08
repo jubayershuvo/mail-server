@@ -5,18 +5,17 @@ import { sendGmailMail } from "@/lib/gmail";
 import { sendOutlookMailWithRefreshToken } from "@/lib/outlook";
 import { sendZohoMailWithRefreshToken } from "@/lib/zoho";
 import Uses from "@/models/Uses";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const { apiKey, to, subject, text } = await req.json();
-  if (!apiKey) return NextResponse.json({ error: "Missing API key" }, { status: 400 });
-  if (!to) return NextResponse.json({ error: "Missing recipient" }, { status: 400 });
-  if (!subject) return NextResponse.json({ error: "Missing subject" }, { status: 400 });
-  if (!text) return NextResponse.json({ error: "Missing text" }, { status: 400 });
+  if (!apiKey) return new Response("Missing API key", { status: 400 });
+  if (!to) return new Response("Missing recipient", { status: 400 });
+  if (!subject) return new Response("Missing subject", { status: 400 });
+  if (!text) return new Response("Missing text", { status: 400 });
 
   await connectToDB();
   const user = await User.findOne({ apiKey });
-  if (!user) return NextResponse.json({ error: "Invalid API key" }, { status: 403 });
+  if (!user) return new Response("Invalid API key", { status: 403 });
 
   if (user.provider === "google") {
     try {
@@ -34,14 +33,14 @@ export async function POST(req: Request) {
         text,
         provider: user.provider,
       });
-      return NextResponse.json({ success: true }, { status: 200 });
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error: any) {
       console.error("Send mail error:", error);
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           error: error.message || "Failed to send mail",
           details: error,
-        },
+        }),
         { status: 500 }
       );
     }
@@ -60,14 +59,14 @@ export async function POST(req: Request) {
         text,
         provider: user.provider,
       });
-      return NextResponse.json({ success: true }, { status: 200 });
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error: any) {
       console.error("Send mail error:", error);
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           error: error.message || "Failed to send mail",
           details: error,
-        },
+        }),
         { status: 500 }
       );
     }
@@ -87,22 +86,22 @@ export async function POST(req: Request) {
         provider: user.provider,
       });
 
-      return NextResponse.json({ success: true }, { status: 200 });
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error: any) {
       console.error("Send mail error:", error);
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           error: error.message || "Failed to send mail",
           details: error,
-        },
+        }),
         { status: 500 }
       );
     }
   } else {
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         error: "Sending mail is not available with this provider",
-      },
+      }),
       { status: 501 }
     );
   }

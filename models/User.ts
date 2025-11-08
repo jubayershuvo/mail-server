@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema(
     provider: { type: String },
     providerAccountId: { type: String },
     refreshToken: { type: String },
-    apiKey: { type: String, sparse: true, unique: true },
+    apiKey: { type: String, unique: true },
   },
   { timestamps: true }
 );
